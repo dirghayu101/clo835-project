@@ -60,12 +60,66 @@
         - npm init -y
         - npm install express mongoose dotenv
 
-Create a Dockerfile to containerize the Node.js application.
-Use environment variables to configure the MongoDB connection string.
-Build and push the Docker image to Docker Hub.
-Database (MongoDB):
-Use the official MongoDB image from Docker Hub.
-Configure MongoDB to use a persistent volume for data storage.
+    - Create a Dockerfile to containerize the Node.js application.
+    - Use environment variables to configure the MongoDB connection string.
+    - Build and push the Docker image to Docker Hub.
+        - docker build -t dirghayu101/mongo-node-api .
+        - docker push dirghayu101/mongo-node-api
+
+# Step3: Database Setup (MongoDB):
+    - Create persistent volumes (k8s/1-persistent-volume-setup/): Set up persistent storage for the MongoDB database using Persistent Volumes (PV) and Persistent Volume Claims (PVC).
+        - kubectl apply -f persistent-volume.yml
+        - kubectl apply -f persistent-volume-claim.yml
+
+    - Creating mongo username and password using base64 as that's the input requirement (k8s/2-configmaps-secrets/):
+        - echo -n "djoshi" | base64
+        - echo -n "your-password" | base64
+    
+    - Setting up configuration (k8s/2-configmaps-secrets/): Create ConfigMaps for managing environment variables like the MongoDB connection string, Node.js application settings, and Nginx configuration. Create Kubernetes Secrets to securely manage sensitive data, such as MongoDB credentials.
+        - kubectl apply -f configmap.yml
+        - kubectl apply -f secret.yml
+
+    - Setup (k8s/3-mongo-setup): Use the official MongoDB image from Docker Hub. Configure MongoDB to use a persistent volume for data storage. Write a deployment manifest for MongoDB that uses the Persistent Volume and ConfigMap. Expose MongoDB using a ClusterIP service.
+        - kubectl apply -f mongo-deployment.yml 
+        - kubectl apply -f mongo-service.yml        
+
+# Step 4: Deploy Node.js Backend:
+    - Setup (k8s/4-node-api-deployment): Write a deployment manifest for the Node.js API server. Use a ConfigMap to manage environment variables (e.g., MongoDB URI, server port). Expose the backend using a ClusterIP service.
+        - kubectl apply -f node-api-deployment.yml
+        - kubectl apply -f node-api-service.yml
 
 
+# Step 5: Nginx deployment:
+    - Setup (k8s/5-nginx): Write a deployment manifest for Nginx. Use ConfigMaps to configure Nginx, if necessary. Expose Nginx using a NodePort service.
+        - kubectl apply -f nginx-deployment.yml
+        - kubectl apply -f nginx-service.yml
+    - Exposing nginx in the localhost:
+        - minikube service nginx --url
 
+# Step 6: Verifying deployment and other helpful commands:
+- kubectl get deployments
+- kubectl get services
+- minikube logs
+- kubectl get pods -o wide
+- kubectl logs <pod-name>
+- kubectl describe pod <pod-name>
+- kubectl delete pod <pod-name>
+
+
+# Step 7: Application Management:
+- Scaling: Scale the Node.js and Nginx deployments to handle more traffic using kubectl scale.
+- Monitoring: Use kubectl logs to monitor the logs of each container. Describe and inspect resources to ensure everything is running smoothly.
+- Port Forwarding: Use kubectl port-forward to access the MongoDB service locally for debugging.
+- Interacting with MongoDB: Connect to MongoDB using the Mongo shell to insert, retrieve, and manage data.
+- Rolling Updates: Perform rolling updates on the Node.js and Nginx deployments to simulate application updates with zero downtime.
+
+# Issues Faced:
+- 1-> I copied a docker file which used node version 14 and one of the mongodb dependency used an operator which was only available in node version 15+, so I had to update my image.
+This command helped me in updating that after I updated the docker image by rebuilding it. Overall the issue was resolved using:
+    # rebuild the docker image.
+    - docker build -t dirghayu101/mongo-node-api .
+    - docker push dirghayu101/mongo-node-api
+    # update context.
+    - kubectl set image deployment/node-api node-api=dirghayu101/mongo-node-api:latest
+
+- 2-> 
