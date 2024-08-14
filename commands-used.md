@@ -108,10 +108,31 @@
 
 # Step 7: Application Management:
 - Scaling: Scale the Node.js and Nginx deployments to handle more traffic using kubectl scale.
+    # Get current configuration.
+    - kubectl get deployments
+    # Specifying scaling configuration.
+    - kubectl scale deployment node-api --replicas=2
+    - kubectl scale deployment nginx --replicas=2
+    # Checks status of deployed resources.
+    - kubectl rollout status deployment node-api
+    - kubectl rollout status deployment nginx
+
 - Monitoring: Use kubectl logs to monitor the logs of each container. Describe and inspect resources to ensure everything is running smoothly.
+    - kubectl logs <pod-name>
+    - kubectl describe pod <pod-name>
+    - kubectl get pods -o wide
+    - minikube addons enable metrics-server  
+    - kubectl top pods # Enabled via minikube.
+    
 - Port Forwarding: Use kubectl port-forward to access the MongoDB service locally for debugging.
+    - kubectl port-forward mongo-76d8bb5 27017:27017  
+
 - Interacting with MongoDB: Connect to MongoDB using the Mongo shell to insert, retrieve, and manage data.
+    - brew install mongodb-community-shell
+    - mongo mongodb://localhost:27017
+
 - Rolling Updates: Perform rolling updates on the Node.js and Nginx deployments to simulate application updates with zero downtime.
+    - kubectl rollout undo deployment/node-api
 
 # Issues Faced:
 - 1-> I copied a docker file which used node version 14 and one of the mongodb dependency used an operator which was only available in node version 15+, so I had to update my image.
@@ -122,4 +143,10 @@ This command helped me in updating that after I updated the docker image by rebu
     # update context.
     - kubectl set image deployment/node-api node-api=dirghayu101/mongo-node-api:latest
 
-- 2-> 
+- 2-> I was facing an issue with connecting mongodb shell. I tried to figure it out coming up with all worst case possibilities but later realized the issue arose because of improper formatting of connection string.
+This command helped me to grab all the values supplied using secret in k8s:
+    - kubectl exec -it mongo-76d8bb58fc-nvnll  -- env | grep MONGO
+    - mongo "mongodb://djoshi:dG4H93Rn%20lk7qw@localhost:27017"         # Actual connection string.
+
+- 3-> Didn't see that there was going to be an interaction between nginx, node and mongo. Had to modify the code accordingly after each one was already deployed independently.
+    - kubectl set image deployment/nginx nginx=dirghayu101/nginx-static:latest

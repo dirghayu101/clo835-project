@@ -3,6 +3,6 @@ kind: ConfigMap
 metadata:
   name: api-config
 data:
-  MONGO_URI: mongodb://mongo:27017/clo835projectdb
+  MONGO_URI: mongodb://djoshi:dG4H93Rn%20lk7qw@mongo.default.svc.cluster.local:27017?authMechanism=SCRAM-SHA-1
   NODE_ENV: production
   PORT: "3000"

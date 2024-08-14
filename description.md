@@ -40,23 +40,25 @@ Create a Node.js API server that connects to MongoDB.
 Create a Dockerfile to containerize the Node.js application.
 Use environment variables to configure the MongoDB connection string.
 Build and push the Docker image to Docker Hub.
+
 Database (MongoDB):
 Use the official MongoDB image from Docker Hub.
 Configure MongoDB to use a persistent volume for data storage.
 Step 3: Create Kubernetes Manifests
 Create Persistent Volumes and Persistent Volume Claims:
-Set up persistent storage for the MongoDB database using Persistent Volumes (PV) and Persistent Volume Claims (PVC).
-Create ConfigMaps:
-Create ConfigMaps for managing environment variables like the MongoDB connection string, Node.js application settings, and Nginx configuration.
-Create Secrets:
-Create Kubernetes Secrets to securely manage sensitive data, such as MongoDB credentials.
+
+Create ConfigMaps: 
 Deploy MongoDB:
 Write a deployment manifest for MongoDB that uses the Persistent Volume and ConfigMap.
 Expose MongoDB using a ClusterIP service.
+
+
 Deploy Node.js Backend:
 Write a deployment manifest for the Node.js API server.
 Use a ConfigMap to manage environment variables (e.g., MongoDB URI, server port).
 Expose the backend using a ClusterIP service.
+
+
 Deploy Nginx Frontend:
 Write a deployment manifest for Nginx.
 Use ConfigMaps to configure Nginx, if necessary.

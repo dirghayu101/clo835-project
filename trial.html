@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Submission Form</title>
+    <style>
+        form {
+            margin: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            max-width: 400px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            background-color: #28a745;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #response {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <form id="movie-form">
+        <label for="title">Movie Title:</label>
+        <input type="text" id="title" name="title" required>
+
+        <label for="year">Release Year:</label>
+        <input type="number" id="year" name="year" required>
+
+        <button type="submit">Add Movie</button>
+    </form>
+
+    <div id="response"></div>
+
+    <script>
+        document.getElementById('movie-form').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent the form from submitting in the traditional way
+
+            const title = document.getElementById('title').value;
+            const year = document.getElementById('year').value;
+
+            try {
+                const response = await fetch('http://localhost:3000/movies', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ title, year })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const result = await response.json();
+
+                document.getElementById('response').innerText = `Movie added successfully: ${JSON.stringify(result, null, 2)}`;
+            } catch (error) {
+                console.error('There was a problem with the fetch operation:', error);
+                document.getElementById('response').innerText = 'Failed to add movie';
+            }
+        });
+    </script>
+
+</body>
+</html>
