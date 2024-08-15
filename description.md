@@ -1,29 +1,25 @@
-## Full-Stack Application Deployment and Management on Kubernetes
-
-# Objective:
+Full-Stack Application Deployment and Management on Kubernetes
+Objective:
 In this project, you will deploy a full-stack application on a Kubernetes cluster, which includes a Node.js backend, a MongoDB database, and an Nginx frontend. You will use Docker for containerization, Kubernetes for orchestration, ConfigMaps for environment management, and Persistent Volumes for data storage. This project will provide hands-on experience in deploying, managing, and scaling a complete application on Kubernetes.
 
 
-# Project Overview:
-1. Application Structure:
 
+Project Overview:
+1. Application Structure:
 Frontend:
 An Nginx server serving a static website.
-
 Backend:
 A Node.js API server that connects to a MongoDB database.
-
 Database:
 A MongoDB database to store and retrieve data.
-
 Step 1: Setup the Kubernetes Environment
-
-# Start Minikube:
+Start Minikube:
 Set up Minikube with sufficient resources.
 Verify that kubectl is configured correctly.
-
-# Create a Namespace:
+Create a Namespace:
 Create a separate namespace for this project to organize resources:
+
+
 kubectl create namespace fullstack-app
 
 
@@ -31,34 +27,28 @@ Step 2: Containerize the Application
 Frontend (Nginx):
 Create a Dockerfile for the Nginx server that serves static files.
 Build and push the Docker image to Docker Hub.
-
-
-
-
-Step 2.5: Backend (Node.js):
+Backend (Node.js):
 Create a Node.js API server that connects to MongoDB.
 Create a Dockerfile to containerize the Node.js application.
 Use environment variables to configure the MongoDB connection string.
 Build and push the Docker image to Docker Hub.
-
 Database (MongoDB):
 Use the official MongoDB image from Docker Hub.
 Configure MongoDB to use a persistent volume for data storage.
 Step 3: Create Kubernetes Manifests
 Create Persistent Volumes and Persistent Volume Claims:
-
-Create ConfigMaps: 
+Set up persistent storage for the MongoDB database using Persistent Volumes (PV) and Persistent Volume Claims (PVC).
+Create ConfigMaps:
+Create ConfigMaps for managing environment variables like the MongoDB connection string, Node.js application settings, and Nginx configuration.
+Create Secrets:
+Create Kubernetes Secrets to securely manage sensitive data, such as MongoDB credentials.
 Deploy MongoDB:
 Write a deployment manifest for MongoDB that uses the Persistent Volume and ConfigMap.
 Expose MongoDB using a ClusterIP service.
-
-
 Deploy Node.js Backend:
 Write a deployment manifest for the Node.js API server.
 Use a ConfigMap to manage environment variables (e.g., MongoDB URI, server port).
 Expose the backend using a ClusterIP service.
-
-
 Deploy Nginx Frontend:
 Write a deployment manifest for Nginx.
 Use ConfigMaps to configure Nginx, if necessary.
