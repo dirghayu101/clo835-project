@@ -1,12 +1,9 @@
 #!/bin/bash
 
-# URL of your Node.js service
 URL="http://localhost:3000/"
 
-# Number of requests to send
 REQUESTS=100
 
-# Interval between requests (in seconds)
 INTERVAL=0.5
 
 echo "Sending $REQUESTS requests to $URL..."
