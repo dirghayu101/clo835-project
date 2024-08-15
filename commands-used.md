@@ -134,6 +134,15 @@
 - Rolling Updates: Perform rolling updates on the Node.js and Nginx deployments to simulate application updates with zero downtime.
     - kubectl rollout undo deployment/node-api
 
+# Demonstrate:
+- Using node port to access nginx frontend.
+- Backend interacts with mongodb.
+- Data persistence verification. Delete and re-initialize mongo.
+- Verify that environment variables are correctly passed from ConfigMaps to the containers.
+    - kubectl exec -it mongo-76d8bb58fc-tzv8k   -- env | grep MONGO
+    - kubectl exec -it node-api-749b4df577-x8gpg -- env | grep MONGO
+- Load testing to see system's behavior.
+
 # Issues Faced:
 - 1-> I copied a docker file which used node version 14 and one of the mongodb dependency used an operator which was only available in node version 15+, so I had to update my image.
 This command helped me in updating that after I updated the docker image by rebuilding it. Overall the issue was resolved using:
@@ -150,3 +159,5 @@ This command helped me to grab all the values supplied using secret in k8s:
 
 - 3-> Didn't see that there was going to be an interaction between nginx, node and mongo. Had to modify the code accordingly after each one was already deployed independently.
     - kubectl set image deployment/nginx nginx=dirghayu101/nginx-static:latest
+    - Changed the Mongo URI Connection string. That was causing a lot of problem. Finally found the correct format through Gemini and a stackoverflow hint.
+    Ref: https://stackoverflow.com/questions/58117292/how-to-properly-deploy-mongodb-on-kubernetes-and-access-it-from-another-pod-jo/58118505#58118505
